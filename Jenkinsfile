@@ -2,13 +2,16 @@ pipeline {
     agent {
         docker {
             image 'jenkins/jenkins:lts-jdk17'
-            args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -u root --privileged'
         }
     }
 
     stages {
         stage('Prepare Environment') {
             steps {
+                echo 'Checking Docker installation...'
+                sh 'docker --version'
+                
                 echo 'Installing Maven...'
                 sh '''
                 apt-get update
