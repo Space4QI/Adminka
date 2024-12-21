@@ -1,30 +1,14 @@
-# Используем официальный образ с JDK 17
-FROM openjdk:17-jdk-slim
+# Используем базовый образ с поддержкой Windows и Java 17
+FROM openjdk:17-jdk
 
-# Устанавливаем зависимости для Maven и Docker
-RUN apt-get update && apt-get install -y \
-    maven \
-    docker.io \
-    curl \
-    ca-certificates
-
-# Устанавливаем рабочую директорию
+# Создаем рабочую директорию
 WORKDIR /app
 
-# Копируем pom.xml и исходный код
-COPY . /app
+# Копируем собранный JAR файл в контейнер
+COPY target/Adminka-1.0-SNAPSHOT.jar app.jar
 
-# Устанавливаем зависимости с помощью Maven
-RUN mvn clean install
+# Указываем порт, на котором работает приложение
+EXPOSE 8081
 
-# Открываем порты для Jenkins
-EXPOSE 8080 50000
-
-# Устанавливаем Docker внутри контейнера (для работы с Docker-in-Docker)
-RUN curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-17.04.0-ce.tgz \
-    && tar xzvf docker-17.04.0-ce.tgz \
-    && mv docker/docker /usr/local/bin \
-    && rm -r docker docker-17.04.0-ce.tgz
-
-# Команда для запуска вашего приложения (если нужно)
-CMD ["mvn", "spring-boot:run"]
+# Указываем команду для запуска Spring Boot приложения
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
