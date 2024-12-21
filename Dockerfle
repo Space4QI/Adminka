@@ -1,0 +1,23 @@
+# Используем официальный Jenkins образ с JDK 17
+FROM openjdk:17-jdk-slim
+
+# Устанавливаем Maven
+RUN apt-get update && apt-get install -y maven
+
+# Устанавливаем Docker внутри контейнера
+RUN apt-get install -y docker.io
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Копируем pom.xml и исходный код
+COPY . /app
+
+# Устанавливаем зависимости
+RUN mvn clean install
+
+# Открываем порты для Jenkins
+EXPOSE 8080 50000
+
+# Команда для запуска вашего приложения
+CMD ["mvn", "spring-boot:run"]
