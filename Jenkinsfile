@@ -20,6 +20,9 @@ pipeline {
             }
         }
         stage('Docker Build') {
+            agent {
+                docker { image 'docker:20.10.24' }
+            }
             steps {
                 echo 'Building Docker image...'
                 sh 'docker build -t adminka:latest .'
